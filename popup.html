@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <h2>Better Timesheet</h2>
+  <div class="controls">
+    <div class="input-group">
+      <input type="text" id="new-project" placeholder="Nouveau projet">
+      <button id="add-project">+</button>
+    </div>
+  </div>
+
+  <div id="result"></div>
+
+  <div class="footer-actions">
+    <button id="reset-all">Réinitialiser tous les temps</button>
+    <div class="footer-row">
+      <button id="open-timesheet">📊 Feuille de temps</button>
+      <button id="export">Export</button>
+      <button id="import">Import</button>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display: none;">
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

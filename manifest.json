@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Better Timesheet",
+  "version": "1.0",
+  "description": "Suivez le temps passé sur vos projets et sites web.",
+  "permissions": [
+    "tabs",
+    "storage",
+    "activeTab",
+    "sidePanel",
+    "alarms"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Time Tracker"
+  },
+  "side_panel": {
+    "default_path": "popup.html"
+  },
+  "icons": {
+    "128": "icon.png"
+  }
+}
