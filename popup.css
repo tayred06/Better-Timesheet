@@ -1,168 +1,252 @@
 :root {
-    --primary-color: #6366f1;
-    --primary-hover: #818cf8;
-    --bg-color: #111827;
-    --card-bg: #1f2937;
-    --text-color: #f9fafb;
-    --text-secondary: #9ca3af;
-    --border-color: #374151;
-    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    /* Dark Theme (Default) */
+    --bg-color: #1a1b26;
+    --surface-color: #24283b;
+    --surface-hover: #2f3549;
+    --primary-color: #7aa2f7;
+    --primary-hover: #5d85d8;
+    --text-primary: #c0caf5;
+    --text-secondary: #9aa5ce;
+    --border-color: #414868;
+    --success-color: #9ece6a;
+    --danger-color: #f7768e;
+    --warning-color: #e0af68;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+    --radius: 12px;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+[data-theme="light"] {
+    --bg-color: #f3f4f6;
+    --surface-color: #ffffff;
+    --surface-hover: #f9fafb;
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     width: 100%;
+    /* height: 600px; */
     height: 100vh;
-    box-sizing: border-box;
-    padding: 16px;
+    /* Fixed height for the popup */
     background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0;
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    padding: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    /* Prevent body scroll */
 }
 
-#result {
-    flex: 1;
-    overflow-y: auto;
-    /* Hide scrollbar for cleaner look but allow scroll */
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-color) transparent;
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-top: 0;
-    margin-bottom: 16px;
-    color: var(--text-color);
-    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--primary-color), var(--warning-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
 }
 
+/* Controls */
 .controls {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .input-group {
     display: flex;
-    align-items: center;
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 4px;
-    transition: border-color 0.2s;
-}
-
-.input-group:focus-within {
-    border-color: var(--primary-color);
+    gap: 8px;
 }
 
 input[type="text"],
-select {
-    flex: 1;
-    padding: 8px 12px;
-    border: none;
-    background-color: transparent;
-    color: var(--text-color);
-    font-size: 0.875rem;
-    outline: none;
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
 }
 
 input[type="text"]:focus,
-select:focus {
-    border-color: transparent;
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(122, 162, 247, 0.2);
 }
 
-button#add-project,
-button#add-site {
-    padding: 6px 12px;
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#add-project {
     background-color: var(--primary-color);
     color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    font-size: 0.875rem;
-    transition: background-color 0.2s;
-    margin-left: 4px;
-}
-
-button#add-project:hover,
-button#add-site:hover {
-    background-color: var(--primary-hover);
-}
-
-/* Accordion Styles */
-.project-accordion {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    margin-bottom: 12px;
-    overflow: hidden;
-}
-
-.accordion-header {
-    padding: 0 16px;
-    /* Remove vertical padding, use height/flex */
-    height: 56px;
-    /* Fixed height */
-    background-color: var(--card-bg);
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 600;
-    user-select: none;
-    transition: background-color 0.2s;
-}
-
-.project-info {
-    display: flex;
-    justify-content: space-between;
-    flex: 1;
-    align-items: center;
-    margin-right: 8px;
-}
-
-.action-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    border-radius: 4px;
-    color: var(--text-secondary);
-    transition: all 0.2s;
+    /* Always white for contrast on primary */
+    width: 40px;
+    font-size: 1.2rem;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.accordion-header:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+#add-project:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
 }
 
-.accordion-body {
-    display: none;
-    border-top: 1px solid var(--border-color);
+/* Accordion */
+.project-accordion {
+    background-color: var(--surface-color);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: border-color 0.2s ease;
 }
 
-.accordion-body.open {
-    display: block;
+.project-accordion.edit-mode {
+    border-color: var(--warning-color);
 }
 
-.site {
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--border-color);
+.accordion-header {
+    padding: 12px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.875rem;
+    cursor: pointer;
+    background-color: var(--surface-color);
+    transition: background-color 0.2s ease;
+}
+
+.accordion-header:hover {
+    background-color: var(--surface-hover);
+}
+
+.project-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.project-name-text {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.project-time {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.project-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    /* Hidden by default for cleaner look, shown on hover */
+    transition: opacity 0.2s ease;
+}
+
+.project-accordion:hover .project-actions,
+.project-accordion.edit-mode .project-actions {
+    opacity: 1;
+}
+
+.action-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 4px;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.action-btn:hover {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+}
+
+.action-btn.delete:hover {
+    color: var(--danger-color);
+}
+
+.action-btn.edit-toggle.active {
+    color: var(--warning-color);
+}
+
+/* Accordion Body */
+.accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: rgba(0, 0, 0, 0.02);
+    /* Slight tint */
+}
+
+.accordion-body.open {
+    max-height: 1000px;
+    /* Arbitrary large value */
+    padding-bottom: 12px;
+}
+
+/* Sites List */
+.sites-header {
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sites-header:hover {
+    opacity: 0.8;
+}
+
+.sites-list {
+    padding: 0 16px;
+}
+
+.sites-list.collapsed {
+    display: none;
+}
+
+.site {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .site:last-child {
@@ -171,179 +255,140 @@ button#add-site:hover {
 
 .site-info {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
-    margin-right: 8px;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .site-name {
-    color: var(--text-secondary);
-    flex: 1;
-    min-width: 0;
+    font-size: 0.9rem;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    max-width: 200px;
 }
 
 .site-time {
-    min-width: 70px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    flex-shrink: 0;
-    margin-left: 12px;
-}
-
-.project-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex: 1;
-    margin-right: 8px;
-    min-width: 0;
-}
-
-.project-name-text {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.project-info>span:last-child {
-    min-width: 70px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    flex-shrink: 0;
-    margin-left: 12px;
-}
-
-.site-actions,
-.project-actions {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-}
-
-/* Hide delete buttons by default */
-.action-btn.delete {
-    display: none;
-}
-
-/* Edit Mode Styles */
-.project-accordion.edit-mode {
-    background-color: rgba(99, 102, 241, 0.1);
-    /* Light primary tint */
-    border-color: var(--primary-color);
-}
-
-.project-accordion.edit-mode .action-btn.delete {
-    display: inline-flex;
-    color: #ef4444;
-}
-
-.project-accordion.edit-mode .site-name,
-.project-accordion.edit-mode .project-name-text {
-    text-decoration: underline;
-    text-decoration-style: dotted;
-    cursor: pointer;
-}
-
-.project-accordion.edit-mode .site-name:hover,
-.project-accordion.edit-mode .project-name-text:hover {
-    color: var(--primary-color);
-}
-
-.action-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 4px;
-    border-radius: 4px;
+    font-size: 0.8rem;
     color: var(--text-secondary);
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.project-actions .edit-toggle {
-    display: none;
+.site-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
-.accordion-header:hover .project-actions .edit-toggle,
-.project-actions .edit-toggle.active {
-    display: flex;
+.site:hover .site-actions {
+    opacity: 1;
 }
 
-.action-btn:hover {
-    color: var(--text-color);
-    background-color: rgba(255, 255, 255, 0.1);
+.site.active-tracking {
+    background-color: rgba(122, 162, 247, 0.15);
+    border-left: 3px solid var(--primary-color);
+    padding-left: 13px;
+    /* Adjust padding to account for border (16px - 3px) */
 }
 
-.action-btn.edit-toggle.active {
+.site.active-tracking .site-name {
+    font-weight: 600;
     color: var(--primary-color);
-    background-color: rgba(99, 102, 241, 0.1);
 }
 
-.action-btn.delete:hover {
-    color: #ef4444;
-    /* Red */
-}
-
-.site-info {
+/* Site Input */
+.site-input-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex: 1;
-    margin-right: 8px;
+    gap: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
-.project-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex: 1;
-    margin-right: 8px;
+.new-site-input {
+    padding: 6px 10px;
+    font-size: 0.85rem;
 }
 
-.site-time {
-    font-variant-numeric: tabular-nums;
-    color: var(--text-color);
+.add-site-btn {
+    background-color: var(--surface-hover);
+    color: var(--text-primary);
+    width: 32px;
+    border: 1px solid var(--border-color);
 }
 
-button#reset {
-    width: 100%;
-    padding: 10px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 0.875rem;
-    margin-top: 20px;
+.add-site-btn:hover {
+    background-color: var(--border-color);
 }
 
-button#reset:hover {
-    background-color: var(--primary-hover);
-}
-
-button#reset:active {
-    transform: translateY(1px);
-}
-
-.footer-actions {
+/* Notes */
+.project-note-container {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: auto;
-    padding-top: 16px;
+}
+
+.project-note {
+    background-color: #FFEBA1;
+    /* Post-it yellow */
+    color: #5d4037;
+    /* Dark brown text for contrast */
+    border: none;
+    border-radius: 4px;
+    /* Slightly less rounded for paper feel */
+    min-height: 150px;
+    resize: vertical;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .project-note {
+    background-color: #FFD100;
+    /* Darker yellow/brown for dark mode */
+    color: #5d4037;
+}
+
+.reset-project-btn {
+    background-color: var(--danger-color);
+    color: white;
+    padding: 8px;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.reset-project-btn:hover {
+    opacity: 1;
+}
+
+#result {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    /* Space for scrollbar */
+    min-height: 0;
+    /* Flexbox fix */
+}
+
+/* Footer */
+.footer-actions {
+    margin-top: 0;
+    /* No longer needed with flex: 1 on result */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: var(--bg-color);
+    padding-top: 12px;
     border-top: 1px solid var(--border-color);
+    z-index: 10;
+    flex-shrink: 0;
+    /* Prevent footer from shrinking */
+}
+
+#reset-all {
+    background-color: transparent;
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+    padding: 8px;
+}
+
+#reset-all:hover {
+    background-color: var(--danger-color);
+    color: white;
 }
 
 .footer-row {
@@ -351,221 +396,297 @@ button#reset:active {
     gap: 8px;
 }
 
-button#reset-all {
-    background-color: #f59e0b;
-    color: white;
+.footer-row button {
+    flex: 1;
     padding: 10px;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.875rem;
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
 }
 
-button#reset-all:hover {
-    background-color: #d97706;
+.footer-row button:hover {
+    background-color: var(--surface-hover);
+    border-color: var(--primary-color);
 }
 
-button#reset-all:active {
-    transform: translateY(1px);
-}
-
-button#open-timesheet {
-    flex: 2;
+#open-timesheet {
     background-color: var(--primary-color);
     color: white;
-    padding: 8px;
     border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.875rem;
+    flex: 2;
+    /* Make it larger */
 }
 
-button#open-timesheet:hover {
+#open-timesheet:hover {
     background-color: var(--primary-hover);
 }
 
-button#open-timesheet:active {
-    transform: translateY(1px);
+/* Icon Button */
+.icon-btn {
+    background: transparent;
+    font-size: 1.2rem;
+    padding: 4px;
 }
 
-button#export,
-button#import {
+.icon-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Views */
+#app-container {
     flex: 1;
-    background-color: transparent;
-    color: var(--text-secondary);
-    padding: 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.75rem;
+    overflow: hidden;
+    position: relative;
+    display: flex;
 }
 
-button#export:hover,
-button#import:hover {
-    background-color: var(--bg-color);
-    border-color: var(--text-secondary);
-}
-
-button#export:active,
-button#import:active {
-    transform: translateY(1px);
-}
-
-.project-note-container {
-    padding: 0px;
-    border-top: 1px solid var(--border-color);
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
-.project-note {
+.view {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    box-sizing: border-box;
-    min-height: 120px;
-    background-color: #fef3c7;
-    /* Post-it yellow */
-    color: #1f2937;
-    /* Dark text for readability */
-    border: 1px solid #fcd34d;
-    border-radius: 4px;
-    padding: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.875rem;
-    resize: vertical;
-    outline: none;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s;
+    height: 100%;
+    /* overflow-y: auto; Removed - handled by inner containers */
+    overflow: hidden;
+    padding-right: 0;
+    /* Moved padding to inner containers if needed */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(20px);
+    display: flex;
+    flex-direction: column;
 }
 
-.project-note:focus {
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+.view.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+    position: relative;
+    /* Allow it to take space in flex container */
 }
 
-/* Dark mode adjustment for post-it if preferred, but keeping yellow for "post-it" feel */
-@media (prefers-color-scheme: dark) {
-    /* Optional: if you want dark post-its, uncomment below. 
-     For now keeping yellow as requested "post-it" style usually implies yellow. */
+/* Scrollable Content Areas */
+#project-list,
+#detail-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    /* Space for scrollbar */
+    min-height: 0;
+    padding: 8px 0;
 }
 
-.sites-header {
-    padding: 8px 16px;
+#detail-footer {
+    flex-shrink: 0;
+    padding-top: 12px;
+    background-color: var(--bg-color);
+    z-index: 5;
+}
+
+/* Dashboard Project Card */
+.project-card {
+    background-color: var(--surface-color);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+    background-color: var(--surface-hover);
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.card-time {
+    font-weight: 700;
+    color: var(--primary-color);
+    background-color: rgba(122, 162, 247, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+/* Detail View */
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#detail-title {
+    flex: 1;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.highlight-time {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+#back-btn {
+    font-size: 1.5rem;
+    padding: 4px 8px;
+    border-radius: 8px;
+    color: var(--text-primary);
+}
+
+#back-btn:hover {
+    background-color: var(--surface-hover);
+}
+
+/* Generic Accordion Section */
+.accordion-section {
+    background-color: var(--surface-color);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.accordion-section-header {
+    padding: 12px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
+    background-color: var(--surface-color);
+    transition: background-color 0.2s ease;
     user-select: none;
-    background-color: rgba(255, 255, 255, 0.02);
-    border-bottom: 1px solid var(--border-color);
 }
 
-.sites-header:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+.accordion-section-header:hover {
+    background-color: var(--surface-hover);
 }
 
-.sites-toggle-icon {
-    transition: transform 0.2s;
+.accordion-section-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.sites-header.collapsed .sites-toggle-icon {
+.accordion-section-icon {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+}
+
+.accordion-section.collapsed .accordion-section-icon {
     transform: rotate(-90deg);
 }
 
-.sites-list {
-    display: block;
+.accordion-section-body {
+    max-height: 1000px;
+    /* Arbitrary large value */
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
-.sites-list.collapsed {
-    display: none;
+.accordion-section.collapsed .accordion-section-body {
+    max-height: 0;
 }
 
-.site-input-row {
+/* Todo List */
+.todo-list {
+    padding: 0 16px;
+}
+
+.todo-item {
     display: flex;
     align-items: center;
-    padding: 8px 16px;
-    border-top: 1px solid var(--border-color);
-    background-color: rgba(255, 255, 255, 0.02);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+    gap: 12px;
 }
 
-.new-site-input {
+.todo-item:last-child {
+    border-bottom: none;
+}
+
+.todo-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.todo-text {
     flex: 1;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.todo-text.done {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+}
+
+.todo-delete-btn {
     background: transparent;
     border: none;
-    color: var(--text-color);
-    font-size: 0.875rem;
-    outline: none;
-    padding: 4px 0;
-}
-
-.new-site-input::placeholder {
     color: var(--text-secondary);
-    opacity: 0.7;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease, color 0.2s ease;
+    font-size: 0.9rem;
 }
 
-.add-site-btn {
-    background-color: var(--primary-color);
-    color: white;
+.todo-item:hover .todo-delete-btn {
+    opacity: 1;
+}
+
+.todo-delete-btn:hover {
+    color: var(--danger-color);
+}
+
+.sites-list {
+    /* Removed border/radius as it's now inside accordion */
+    background-color: transparent;
     border: none;
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+.site {
+    padding: 12px 16px;
+}
+
+.site:hover {
+    background-color: var(--surface-hover);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
     border-radius: 4px;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1.2rem;
-    line-height: 1;
-    margin-left: 8px;
-    transition: background-color 0.2s;
 }
 
-.add-site-btn:hover {
-    background-color: var(--primary-hover);
-}
-
-.reset-project-btn {
-    width: 100%;
-    padding: 10px;
-    background-color: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 8px;
-}
-
-.reset-project-btn:hover {
-    background-color: #dc2626;
-}
-
-.reset-project-btn:active {
-    transform: translateY(1px);
-}
-
-.reset-all-btn {
-    flex: 1;
-    padding: 10px;
-    background-color: #f59e0b;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.reset-all-btn:hover {
-    background-color: #d97706;
-}
-
-.reset-all-btn:active {
-    transform: translateY(1px);
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
 }

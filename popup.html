@@ -7,15 +7,35 @@
 </head>
 
 <body>
-  <h2>Better Timesheet</h2>
-  <div class="controls">
-    <div class="input-group">
-      <input type="text" id="new-project" placeholder="Nouveau projet">
-      <button id="add-project">+</button>
+  <div class="header">
+    <h2>Better Timesheet</h2>
+    <button id="theme-toggle" class="icon-btn" title="Changer de thème">🌙</button>
+  </div>
+  <div id="app-container">
+    <!-- Dashboard View -->
+    <div id="dashboard-view" class="view active">
+      <div class="controls">
+        <div class="input-group">
+          <input type="text" id="new-project" placeholder="Nouveau projet">
+          <button id="add-project">+</button>
+        </div>
+      </div>
+      <div id="project-list"></div>
+    </div>
+
+    <!-- Project Detail View -->
+    <div id="detail-view" class="view">
+      <div class="detail-header">
+        <button id="back-btn" class="icon-btn">←</button>
+        <h3 id="detail-title">Project Name</h3>
+        <span id="detail-time" class="highlight-time">0h 0m</span>
+      </div>
+      <div id="detail-content">
+        <!-- Sites and Notes will go here -->
+      </div>
+      <div id="detail-footer"></div>
     </div>
   </div>
-
-  <div id="result"></div>
 
   <div class="footer-actions">
     <button id="reset-all">Réinitialiser tous les temps</button>
