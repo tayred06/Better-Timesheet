@@ -27,7 +27,14 @@
     <div id="detail-view" class="view">
       <div class="detail-header">
         <button id="back-btn" class="icon-btn">←</button>
-        <h3 id="detail-title">Project Name</h3>
+        <div class="detail-title-group" id="detail-header-group">
+          <div class="detail-title-row">
+            <h3 id="detail-title">Project Name</h3>
+            <button id="edit-project-btn" class="icon-btn">✏️</button>
+          </div>
+          <span id="project-code-display" class="project-code-display"></span>
+          <input type="text" id="project-code" placeholder="Code projet..." class="project-code-input">
+        </div>
         <span id="detail-time" class="highlight-time">0h 0m</span>
       </div>
       <div id="detail-content">
@@ -35,12 +42,22 @@
       </div>
       <div id="detail-footer"></div>
     </div>
+
+    <!-- Summary View -->
+    <div id="summary-view" class="view">
+      <div class="detail-header">
+        <button id="summary-back-btn" class="icon-btn">←</button>
+        <h3>Résumé de la journée</h3>
+      </div>
+      <div id="summary-content"></div>
+    </div>
   </div>
 
   <div class="footer-actions">
     <button id="reset-all">Réinitialiser tous les temps</button>
     <div class="footer-row">
-      <button id="open-timesheet">📊 Feuille de temps</button>
+      <button id="open-summary">📈 Résumé</button>
+      <button id="open-timesheet">📊 Feuille</button>
       <button id="export">Export</button>
       <button id="import">Import</button>
     </div>

@@ -7,6 +7,7 @@ function formatTime(seconds) {
 const PROJECTS_KEY = "__projects__";
 const NOTES_KEY = "__notes__";
 const TODOS_KEY = "__todos__";
+const PROJECT_CODES_KEY = "__project_codes__";
 const UI_STATE_KEY = "__ui_state__";
 const TIMESHEET_URL_KEY = "__timesheet_url__";
 const THEME_KEY = "__theme__";
@@ -75,8 +76,114 @@ function render() {
       renderDashboard(data);
     } else if (currentView === 'detail' && selectedProject) {
       renderProjectDetail(data, selectedProject);
+    } else if (currentView === 'summary') {
+      renderSummary(data);
     }
   });
+}
+
+function renderSummary(data) {
+  const container = document.getElementById("summary-content");
+  container.innerHTML = "";
+
+  const projects = data[PROJECTS_KEY] || {};
+  const codes = data[PROJECT_CODES_KEY] || {};
+  const sites = { ...data };
+  // cleanup
+  [PROJECTS_KEY, NOTES_KEY, UI_STATE_KEY, TIMESHEET_URL_KEY, THEME_KEY, TODOS_KEY, PROJECT_CODES_KEY].forEach(k => delete sites[k]);
+
+  // Calculate Totals
+  let totalTime = 0;
+  const projectTimes = [];
+
+  // 1. Project Times
+  Object.keys(projects).forEach(projName => {
+    let pTime = 0;
+    (projects[projName] || []).forEach(s => pTime += (sites[s] || 0));
+    projectTimes.push({ name: projName, time: pTime, code: codes[projName] });
+    totalTime += pTime;
+  });
+
+  // 2. Unassigned Time
+  const allAssigned = Object.values(projects).flat();
+  const unassigned = Object.keys(sites).filter(s => !allAssigned.includes(s));
+  let unassignedTime = 0;
+  unassigned.forEach(s => unassignedTime += (sites[s] || 0));
+
+  if (unassignedTime > 0) {
+    projectTimes.push({ name: "Autres", time: unassignedTime });
+    totalTime += unassignedTime;
+  }
+
+  // Sort projects by time
+  projectTimes.sort((a, b) => b.time - a.time);
+
+  // --- Render ---
+
+  // 1. Total Time
+  const totalContainer = document.createElement("div");
+  totalContainer.className = "summary-total-container";
+  totalContainer.innerHTML = `
+    <div class="summary-total-label">Temps Total</div>
+    <div class="summary-total-time">${formatTime(totalTime)}</div>
+  `;
+  container.appendChild(totalContainer);
+
+  // 2. Project Breakdown
+  if (totalTime > 0) {
+    const chartSection = document.createElement("div");
+    chartSection.innerHTML = `<div class="summary-section-title">Répartition par Projet</div>`;
+
+    projectTimes.forEach(p => {
+      if (p.time === 0) return;
+      const percent = Math.round((p.time / totalTime) * 100);
+      const codeHtml = p.code ? `<span class="project-code-tag">${p.code}</span>` : '';
+
+      const item = document.createElement("div");
+      item.className = "summary-chart-item";
+      item.innerHTML = `
+        <div class="summary-chart-header">
+          <span>${p.name}${codeHtml}</span>
+          <span>${formatTime(p.time)} (${percent}%)</span>
+        </div>
+        <div class="summary-chart-bar-bg">
+          <div class="summary-chart-bar-fill" style="width: ${percent}%"></div>
+        </div>
+      `;
+      chartSection.appendChild(item);
+    });
+    container.appendChild(chartSection);
+  }
+
+  // 3. Top Sites
+  const sortedSites = Object.entries(sites)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5); // Top 5
+
+  if (sortedSites.length > 0) {
+    const topSitesSection = document.createElement("div");
+    topSitesSection.style.marginTop = "20px";
+    topSitesSection.innerHTML = `<div class="summary-section-title">Top 5 Sites</div>`;
+
+    const list = document.createElement("div");
+    list.className = "top-sites-list";
+
+    sortedSites.forEach(([site, time], index) => {
+      const item = document.createElement("div");
+      item.className = "top-site-item";
+      item.innerHTML = `
+        <div>
+          <span class="top-site-rank">#${index + 1}</span>
+          <span>${site}</span>
+        </div>
+        <span>${formatTime(time)}</span>
+      `;
+      list.appendChild(item);
+    });
+
+    topSitesSection.appendChild(list);
+    container.appendChild(topSitesSection);
+  }
 }
 
 function renderDashboard(data) {
@@ -90,6 +197,8 @@ function renderDashboard(data) {
   delete sites[UI_STATE_KEY];
   delete sites[TIMESHEET_URL_KEY];
   delete sites[THEME_KEY];
+  delete sites[TODOS_KEY];
+  delete sites[PROJECT_CODES_KEY];
 
   // Render Projects
   Object.keys(projects).forEach(projName => {
@@ -135,9 +244,10 @@ function createProjectCard(name, time, isUnassigned = false) {
 function renderProjectDetail(data, projectName) {
   const projects = data[PROJECTS_KEY] || {};
   const notes = data[NOTES_KEY] || {};
+  const codes = data[PROJECT_CODES_KEY] || {};
   const sites = { ...data };
   // cleanup sites object
-  [PROJECTS_KEY, NOTES_KEY, UI_STATE_KEY, TIMESHEET_URL_KEY, THEME_KEY].forEach(k => delete sites[k]);
+  [PROJECTS_KEY, NOTES_KEY, UI_STATE_KEY, TIMESHEET_URL_KEY, THEME_KEY, TODOS_KEY, PROJECT_CODES_KEY].forEach(k => delete sites[k]);
 
   let projSites = [];
   if (projectName === "Autres") {
@@ -160,6 +270,50 @@ function renderProjectDetail(data, projectName) {
   const timeDisplay = document.getElementById("detail-time");
   timeDisplay.textContent = formatTime(totalTime);
   timeDisplay.dataset.project = projectName;
+
+  // Update Code Input & Display
+  const headerGroup = document.getElementById("detail-header-group");
+  const codeDisplay = document.getElementById("project-code-display");
+  const codeInput = document.getElementById("project-code");
+  const editBtn = document.getElementById("edit-project-btn");
+
+  // Reset editing state
+  headerGroup.classList.remove("editing");
+
+  if (projectName === "Autres") {
+    codeInput.style.display = "none";
+    codeDisplay.style.display = "none";
+    editBtn.style.display = "none";
+  } else {
+    editBtn.style.display = "block";
+    const currentCode = codes[projectName] || "";
+
+    codeDisplay.textContent = currentCode;
+    codeDisplay.style.display = "block"; // Ensure visible initially
+    codeInput.value = currentCode;
+
+    // Edit Button Handler
+    editBtn.onclick = () => {
+      headerGroup.classList.add("editing");
+      codeInput.focus();
+    };
+
+    // Save Handler
+    const saveCode = () => {
+      const newCode = codeInput.value.trim();
+      saveProjectCode(projectName, newCode);
+      codeDisplay.textContent = newCode;
+      headerGroup.classList.remove("editing");
+    };
+
+    codeInput.onblur = saveCode;
+    codeInput.onkeydown = (e) => {
+      if (e.key === "Enter") {
+        saveCode();
+        codeInput.blur();
+      }
+    };
+  }
 
   // Content Container
   const content = document.getElementById("detail-content");
@@ -496,10 +650,8 @@ function navigateToProject(name) {
   currentView = 'detail';
 
   document.getElementById("dashboard-view").classList.remove("active");
+  document.getElementById("summary-view").classList.remove("active");
   document.getElementById("detail-view").classList.add("active");
-
-  // Hide global controls/footer if needed? 
-  // For now keeping footer, but maybe hiding "Add Project" input which is in dashboard view anyway.
 
   render();
 }
@@ -509,6 +661,26 @@ document.getElementById("back-btn").onclick = () => {
   selectedProject = null;
 
   document.getElementById("detail-view").classList.remove("active");
+  document.getElementById("summary-view").classList.remove("active");
+  document.getElementById("dashboard-view").classList.add("active");
+
+  render();
+};
+
+document.getElementById("open-summary").onclick = () => {
+  currentView = 'summary';
+
+  document.getElementById("dashboard-view").classList.remove("active");
+  document.getElementById("detail-view").classList.remove("active");
+  document.getElementById("summary-view").classList.add("active");
+
+  render();
+};
+
+document.getElementById("summary-back-btn").onclick = () => {
+  currentView = 'dashboard';
+
+  document.getElementById("summary-view").classList.remove("active");
   document.getElementById("dashboard-view").classList.add("active");
 
   render();
@@ -602,20 +774,31 @@ function deleteSite(site, projectName) {
   });
 }
 
+function saveProjectCode(projectName, code) {
+  chrome.storage.local.get(PROJECT_CODES_KEY, (result) => {
+    const codes = result[PROJECT_CODES_KEY] || {};
+    codes[projectName] = code;
+    chrome.storage.local.set({ [PROJECT_CODES_KEY]: codes });
+  });
+}
+
 function deleteProject(projectName) {
-  chrome.storage.local.get([PROJECTS_KEY, NOTES_KEY, TODOS_KEY], (result) => {
+  chrome.storage.local.get([PROJECTS_KEY, NOTES_KEY, TODOS_KEY, PROJECT_CODES_KEY], (result) => {
     const projects = result[PROJECTS_KEY] || {};
     const notes = result[NOTES_KEY] || {};
     const todos = result[TODOS_KEY] || {};
+    const codes = result[PROJECT_CODES_KEY] || {};
 
     delete projects[projectName];
     delete notes[projectName];
     delete todos[projectName];
+    delete codes[projectName];
 
     chrome.storage.local.set({
       [PROJECTS_KEY]: projects,
       [NOTES_KEY]: notes,
-      [TODOS_KEY]: todos
+      [TODOS_KEY]: todos,
+      [PROJECT_CODES_KEY]: codes
     }, () => {
       // Go back to dashboard
       document.getElementById("back-btn").click();
